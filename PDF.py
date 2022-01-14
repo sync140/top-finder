@@ -3,6 +3,7 @@ import sys
 import re
 import fitz
 
+
 def find_tops(filename):
     """Erstellt eine Liste von TOPs aus einer PDF-Datei."""
     with fitz.open(filename) as doc:
@@ -14,6 +15,7 @@ def find_tops(filename):
             tops.extend(matches)
 
     return tops
+
 
 def make_readme(dir):
     """
@@ -48,6 +50,7 @@ def make_readme(dir):
             num_tops += len(tops)
 
     print(f'Es wurden insgesamt {num_files} Protokolle eingelesen und {num_tops} TOPs gefunden.')
+
 
 if __name__ == '__main__':
     if len(sys.argv) < 2:
