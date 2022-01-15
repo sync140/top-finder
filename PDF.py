@@ -18,7 +18,7 @@ def find_tops(filename):
     elif filename.endswith('.html'):
         with open(filename) as f:
             text = f.read()
-            pattern = re.compile(r'^<H2>\d+\. (.*):</H2>$', re.MULTILINE)
+            pattern = re.compile(r'^<[Hh]2>(?:\d+\. )?(.*):?</[Hh]2>$', re.MULTILINE)
             tops = pattern.findall(text)
 
     return tops
@@ -46,7 +46,7 @@ def make_readme(dir):
             tops = find_tops(path)
 
             if len(tops) == 0:
-                readme.write(f'Keine TOPS im Protokoll vom {date} gefunden.')
+                readme.write(f'Keine TOPS im Protokoll vom {date} gefunden.  \n')
             else:
                 # Schreibe die TOPs in Stichpunkten
                 readme.write(f'Protokoll vom {date}:\n* ')
