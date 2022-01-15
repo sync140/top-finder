@@ -6,22 +6,20 @@ import fitz
 
 def find_tops(filename):
     """Erstellt eine Liste von TOPs aus einer PDF- oder HTML-Datei."""
-    tops = []
-    
-    if filename.endswith('.pdf'):
-        with fitz.open(filename) as doc:
-            pattern = re.compile(r'^TOP \d+:? (.*)$', re.MULTILINE)
+    text = ""
 
+    if filename.endswith('.pdf'):
+        pattern = re.compile(r'^TOP \d+:? (.*)$', re.MULTILINE)
+        with fitz.open(filename) as doc:
             for page in doc:
-                matches = pattern.findall(page.get_text())
-                tops.extend(matches)
+                text += page.get_text()
     elif filename.endswith('.html'):
+        # TODO regex richtig schreiben
+        pattern = re.compile(r'^<[Hh]2>(?:\d+\. )?(.*):?</[Hh]2>$', re.MULTILINE)
         with open(filename) as f:
             text = f.read()
-            pattern = re.compile(r'^<[Hh]2>(?:\d+\. )?(.*):?</[Hh]2>$', re.MULTILINE)
-            tops = pattern.findall(text)
 
-    return tops
+    return pattern.findall(text)
 
 
 def make_readme(dir):
