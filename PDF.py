@@ -5,14 +5,21 @@ import fitz
 
 
 def find_tops(filename):
-    """Erstellt eine Liste von TOPs aus einer PDF-Datei."""
-    with fitz.open(filename) as doc:
-        pattern = re.compile(r'^TOP \d+:? (.*)$', re.MULTILINE)
-        tops = []
+    """Erstellt eine Liste von TOPs aus einer PDF- oder HTML-Datei."""
+    tops = []
+    
+    if filename.endswith('.pdf'):
+        with fitz.open(filename) as doc:
+            pattern = re.compile(r'^TOP \d+:? (.*)$', re.MULTILINE)
 
-        for page in doc:
-            matches = pattern.findall(page.get_text())
-            tops.extend(matches)
+            for page in doc:
+                matches = pattern.findall(page.get_text())
+                tops.extend(matches)
+    elif filename.endswith('.html'):
+        with open(filename) as f:
+            text = f.read()
+            pattern = re.compile(r'^<H2>\d+\. (.*):</H2>$', re.MULTILINE)
+            tops = pattern.findall(text)
 
     return tops
 
@@ -28,13 +35,13 @@ def make_readme(dir):
         num_tops = 0
 
         for file in os.listdir(dir):
-            # Lese nur PDF-Dateien ein
-            if not file.endswith('.pdf'):
+            # Lese nur PDF- und HTML-Dateien ein
+            if not (file.endswith('.pdf') or file.endswith('.html')):
                 continue
 
             path = os.path.join(dir, file)
 
-            # Wenn der Dateiname nicht geändert wurde, hat er das Format FS-Protokoll_YYYY-MM-DD_public.pdf
+            # Wenn der Dateiname nicht geändert wurde, hat er das Format FS-Protokoll_YYYY-MM-DD_public.pdf/html
             date = f'{file[21:23]}.{file[18:20]}.{file[13:17]}'
             tops = find_tops(path)
 
